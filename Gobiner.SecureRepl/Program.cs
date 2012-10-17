@@ -12,6 +12,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
 using System.Diagnostics;
+using System.Dynamic;
 
 namespace Gobiner.SecureRepl
 {
@@ -41,8 +42,9 @@ namespace Gobiner.SecureRepl
 
 
             var test = (ReplTester)safeDomain.CreateInstanceFromAndUnwrap(typeof(ReplTester).Assembly.Location, typeof(ReplTester).FullName);
+            test = new ReplTester();
 			var result = test.DoIt();
-			Console.WriteLine(result);
+            Console.WriteLine(result);
         }
 
 		public class ReplTester : MarshalByRefObject
@@ -51,6 +53,7 @@ namespace Gobiner.SecureRepl
 			public string DoIt()
 			{
                 new PermissionSet(PermissionState.Unrestricted).Assert();
+
                 var engine = new ScriptEngine();
                 foreach (var assembly in references)
                     engine.AddReference(assembly);
@@ -60,9 +63,17 @@ namespace Gobiner.SecureRepl
                 var session = engine.CreateSession();
 
                 var submission = session.CompileSubmission<object>("Tuple.Create(4,20)");
+
                 CodeAccessPermission.RevertAssert();
+
                 var result = submission.Execute();
                 var ret = ObjectFormatter.Instance.FormatObject(result);
+
+                // Required to work around full-trust finalizers in Roslyn.Compilers.MetadataReader.MemoryMappedFile
+                new PermissionSet(PermissionState.Unrestricted).Assert();
+                GC.Collect(3, GCCollectionMode.Forced, true);
+                CodeAccessPermission.RevertAssert();
+
                 return ret;
 			}
 		}
