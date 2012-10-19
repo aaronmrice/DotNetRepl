@@ -13,13 +13,13 @@ using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 //using StackExchange.Profiling.Data.Linq2Sql;
 
 [assembly: WebActivator.PreApplicationStartMethod(
-	typeof(Gobiner.DotNetRepl.Web.App_Start.MiniProfilerPackage), "PreStart")]
+    typeof(Gobiner.DotNetRepl.Web.App_Start.MiniProfilerPackage), "PreStart")]
 
 [assembly: WebActivator.PostApplicationStartMethod(
-	typeof(Gobiner.DotNetRepl.Web.App_Start.MiniProfilerPackage), "PostStart")]
+    typeof(Gobiner.DotNetRepl.Web.App_Start.MiniProfilerPackage), "PostStart")]
 
 
-namespace Gobiner.DotNetRepl.Web.App_Start 
+namespace Gobiner.DotNetRepl.Web.App_Start
 {
     public static class MiniProfilerPackage
     {
@@ -35,11 +35,11 @@ namespace Gobiner.DotNetRepl.Web.App_Start
             //TODO: Non SQL Server based installs can use other formatters like: new StackExchange.Profiling.SqlFormatters.InlineFormatter()
             MiniProfiler.Settings.SqlFormatter = new StackExchange.Profiling.SqlFormatters.SqlServerFormatter();
 
-			//TODO: To profile a standard DbConnection: 
-			// var profiled = new ProfiledDbConnection(cnn, MiniProfiler.Current);
+            //TODO: To profile a standard DbConnection: 
+            // var profiled = new ProfiledDbConnection(cnn, MiniProfiler.Current);
 
             //TODO: If you are profiling EF code first try: 
-			// MiniProfilerEF.Initialize();
+            // MiniProfilerEF.Initialize();
 
             //Make sure the MiniProfiler handles BeginRequest and EndRequest
             DynamicModuleUtility.RegisterModule(typeof(MiniProfilerStartupModule));
@@ -47,18 +47,18 @@ namespace Gobiner.DotNetRepl.Web.App_Start
             //Setup profiler for Controllers via a Global ActionFilter
             GlobalFilters.Filters.Add(new ProfilingActionFilter());
 
-			// You can use this to check if a request is allowed to view results
+            // You can use this to check if a request is allowed to view results
             //MiniProfiler.Settings.Results_Authorize = (request) =>
             //{
-                // you should implement this if you need to restrict visibility of profiling on a per request basis 
+            // you should implement this if you need to restrict visibility of profiling on a per request basis 
             //    return !DisableProfilingResults; 
             //};
 
             // the list of all sessions in the store is restricted by default, you must return true to alllow it
             //MiniProfiler.Settings.Results_List_Authorize = (request) =>
             //{
-                // you may implement this if you need to restrict visibility of profiling lists on a per request basis 
-                //return true; // all requests are kosher
+            // you may implement this if you need to restrict visibility of profiling lists on a per request basis 
+            //return true; // all requests are kosher
             //};
         }
 
