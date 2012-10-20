@@ -14,7 +14,12 @@ namespace Gobiner.SecureRepl
         public string Execute(string inp)
         {
             KeepAlive();
-            return ProcessState.SecureRepl.Execute(inp);
+            var result = ProcessState.SecureRepl.Execute(inp);
+            if (result.ExecutionStillOngoing)
+                ProcessState.InstructedToDie = true;
+            if (result.CompilationErrors != null)
+                return result.CompilationErrors[0];
+            return result.ExecutionResult;
         }
 
         public void Kill()

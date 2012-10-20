@@ -46,6 +46,8 @@ namespace Gobiner.SecureRepl
 
                 host.Close();
             }
+
+            Environment.Exit(0);
         }
     }
 }

@@ -12,6 +12,8 @@ namespace Gobiner.SecureRepl
 {
     public static class ProcessState
     {
+        private static object lockObject = new object();
+
         static ProcessState()
         {
             var safePerms = new PermissionSet(PermissionState.None);
@@ -31,8 +33,61 @@ namespace Gobiner.SecureRepl
             SecureRepl = (SecureRoslynWrapper)safeDomain.CreateInstanceFromAndUnwrap(typeof(SecureRoslynWrapper).Assembly.Location, typeof(SecureRoslynWrapper).FullName);
         }
 
-        internal static SecureRoslynWrapper SecureRepl { get; private set; }
-        internal static DateTime LastHeartBeat { get; set; }
-        internal static bool InstructedToDie { get; set; }
+        private static SecureRoslynWrapper _secureRepl;
+        internal static SecureRoslynWrapper SecureRepl
+        {
+            get
+            {
+                lock (lockObject)
+                {
+                    return _secureRepl;
+                }
+            }
+            private set
+            {
+                lock (lockObject)
+                {
+                    _secureRepl = value;
+                }
+            }
+        }
+
+        private static DateTime _lastHeartBeat;
+        internal static DateTime LastHeartBeat
+        {
+            get
+            {
+                lock (lockObject)
+                {
+                    return _lastHeartBeat;
+                }
+            }
+            set
+            {
+                lock (lockObject)
+                {
+                    _lastHeartBeat = value;
+                }
+            }
+        }
+
+        private static bool _instructedToDie;
+        internal static bool InstructedToDie
+        {
+            get
+            {
+                lock (lockObject)
+                {
+                    return _instructedToDie;
+                }
+            }
+            set
+            {
+                lock (lockObject)
+                {
+                    _instructedToDie = value;
+                }
+            }
+        }
     }
 }

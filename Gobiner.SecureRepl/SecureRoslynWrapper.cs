@@ -4,13 +4,14 @@ using System.Linq;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 using Roslyn.Compilers;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
 namespace Gobiner.SecureRepl
 {
-    class SecureRoslynWrapper : MarshalByRefObject
+    internal class SecureRoslynWrapper : MarshalByRefObject
     {
         private static readonly string[] references = new string[] { "System.dll", "System.Core.dll", "System.Data.dll", "System.Data.DataSetExtensions.dll", "Microsoft.CSharp.dll", "System.Xml.dll", "System.Xml.Linq.dll", "System.Data.Entity.dll", "System.Windows.Forms.dll", };
         private static readonly string[] namespaces = new string[] { "System", "System.Collections.Generic", "System.Linq", "System.Text" };
@@ -33,27 +34,45 @@ namespace Gobiner.SecureRepl
         }
 
         [SecurityCritical]
-        public string Execute(string inp)
+        public ReplResult Execute(string inp)
         {
             new PermissionSet(PermissionState.Unrestricted).Assert();
 
-            string ret = null;
+            ReplResult ret = new ReplResult();
             try
             {
                 var submission = Session.CompileSubmission<object>(inp);
 
-                CodeAccessPermission.RevertAssert();
-
-                var result = submission.Execute();
-                ret = ObjectFormatter.Instance.FormatObject(result);
+                var thread = new Thread(new ThreadStart(() =>
+                {
+                    try
+                    {
+                        var result = submission.Execute();
+                        ret.ExecutionResult = ObjectFormatter.Instance.FormatObject(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        ret.ExecutionResult = ex.ToString();
+                    }
+                }), 1024 * 1024);
+                thread.Start();
+                if (!thread.Join(4000))
+                {
+                    thread.Abort();
+                }
+                if (!thread.Join(500))
+                {
+                    // Some kind of submission that can't be aborted, process needs to die
+                    ret.ExecutionStillOngoing = true;
+                }
             }
             catch (CompilationErrorException ex)
             {
-                ret = ex.Message;
+                ret.CompilationErrors = ex.Diagnostics.Select(x => x.Info.ToString()).ToArray();
             }
             catch (Exception ex)
             {
-                ret = ex.ToString();
+                ret.ExecutionResult = ex.ToString();
             }
             finally
             {
