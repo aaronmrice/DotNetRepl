@@ -6,13 +6,7 @@
     <meta charset="utf-8" />
     <link rel="shortcut icon" href="/favicon.ico">
     @this.TimeScript("bootstrap.min.css", @<link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" type="text/css" />)
-    <style type="text/css">
-        body
-        {
-            padding-top: 60px;
-            padding-bottom: 40px;
-        }
-    </style>
+    @this.TimeScript("dotnetrepl.css", @<link href="@Url.Content("~/Content/dotnetrepl.css")" rel="stylesheet" type="text/css" />)
     <title>@ViewBag.Title</title>
 </head>
 <body>
