@@ -47,8 +47,8 @@ namespace Gobiner.DotNetRepl.Web
             };
             process.Start();
             ProcessID = process.Id;
-            
-            _wcfClient = new Wcf.ReplClient("BasicHttpBinding_IRepl", "http://localhost:" + Port + "/Repl");
+
+            _wcfClient = new Wcf.ReplClient(new System.ServiceModel.NetTcpBinding(), new System.ServiceModel.EndpointAddress("net.tcp://localhost:" + Port + "/Repl"));
         }
 
         public ReplConnection(Guid id)
@@ -80,12 +80,14 @@ namespace Gobiner.DotNetRepl.Web
         }
         private void Dispose(bool disposing)
         {
+            if (_wcfClient != null)
+                WcfClient.Kill();
+
             if (disposing)
             {
                 _wcfClient.Abort();
             }
-            if (_wcfClient != null)
-                WcfClient.Kill();
+
             _wcfClient = null;
             Connections.Remove(this.ID);
         }

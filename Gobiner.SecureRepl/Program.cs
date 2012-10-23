@@ -30,11 +30,12 @@ namespace Gobiner.SecureRepl
                 Environment.Exit(1);
             }
 
+
             ProcessState.LastHeartBeat = DateTime.Now;
 
-            using (ServiceHost host = new ServiceHost(typeof(Repl), new Uri[] { new Uri("http://localhost:" + port) }))
+            using (ServiceHost host = new ServiceHost(typeof(Repl), new Uri[] { new Uri("net.tcp://localhost:" + port) }))
             {
-                host.AddServiceEndpoint(typeof(IRepl), new BasicHttpBinding(), "Repl");
+                host.AddServiceEndpoint(typeof(IRepl), new NetTcpBinding(), "net.tcp://localhost:" + port + "/Repl");
 
                 host.Open();
 
