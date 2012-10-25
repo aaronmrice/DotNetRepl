@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F738C1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gobiner.SecureRepl.CommandLine", "Gobiner.SecureRepl.CommandLine\Gobiner.SecureRepl.CommandLine.csproj", "{AFAAB096-0306-4D34-9009-6F0163A2E627}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gobiner.SecureRepl.Tests", "Gobiner.SecureRepl.Tests\Gobiner.SecureRepl.Tests.csproj", "{D84788D9-C61C-4F6B-A644-CF50D70E3AED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,16 @@ Global
 		{AFAAB096-0306-4D34-9009-6F0163A2E627}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{AFAAB096-0306-4D34-9009-6F0163A2E627}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{AFAAB096-0306-4D34-9009-6F0163A2E627}.Release|x86.ActiveCfg = Release|Any CPU
+		{D84788D9-C61C-4F6B-A644-CF50D70E3AED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D84788D9-C61C-4F6B-A644-CF50D70E3AED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D84788D9-C61C-4F6B-A644-CF50D70E3AED}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D84788D9-C61C-4F6B-A644-CF50D70E3AED}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D84788D9-C61C-4F6B-A644-CF50D70E3AED}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D84788D9-C61C-4F6B-A644-CF50D70E3AED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D84788D9-C61C-4F6B-A644-CF50D70E3AED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D84788D9-C61C-4F6B-A644-CF50D70E3AED}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D84788D9-C61C-4F6B-A644-CF50D70E3AED}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D84788D9-C61C-4F6B-A644-CF50D70E3AED}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
