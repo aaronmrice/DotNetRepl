@@ -15,7 +15,7 @@ namespace Gobiner.SecureRepl.CommandLine
             var port = new Random().Next(10000, 20000);
             Process.Start("Gobiner.SecureRepl.exe", port.ToString());
             Thread.Sleep(500);
-            var wcfClient = new Wcf.ReplClient("BasicHttpBinding_IRepl", "http://localhost:" + port + "/Repl");
+            var wcfClient = new Wcf.ReplClient(new System.ServiceModel.NetTcpBinding(), new System.ServiceModel.EndpointAddress("net.tcp://localhost:" + port + "/Repl"));
 
             var input = "";
 
