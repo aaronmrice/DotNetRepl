@@ -47,10 +47,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CantWriteFiles.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtectedSpinloopExits.cs" />
-    <Compile Include="SpinloopExits.cs" />
+    <Compile Include="ReplTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
