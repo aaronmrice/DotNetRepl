@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Gobiner.SecureRepl.Tests
 {
-    public class ReplTests
+    public class ReplTests : IDisposable
     {
         [Fact(Timeout = 10000)]
         public void ProtectedSpinloopReturns()
@@ -35,10 +35,12 @@ namespace Gobiner.SecureRepl.Tests
             var repl = new Repl();
             repl.Execute(@"System.IO.File.WriteAllText(@""c:\test.txt"", ""test"");");
             Assert.False(File.Exists("c:\\test.txt"));
+        }
 
+        public void Dispose()
+        {
             if (File.Exists("c:\\test.txt"))
                 File.Delete("c:\\test.txt");
         }
-
     }
 }
