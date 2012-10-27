@@ -37,6 +37,17 @@ namespace Gobiner.SecureRepl.Tests
             Assert.False(File.Exists("c:\\test.txt"));
         }
 
+        [Fact]
+        public void CantAssertNewPermissions()
+        {
+            if (File.Exists("c:\\test.txt"))
+                File.Delete("c:\\test.txt");
+
+            var repl = new Repl();
+            repl.Execute(@"new System.Security.PermissionSet(System.Security.Permissions.PermissionState.Unrestricted).Assert(); System.IO.File.WriteAllText(@""c:\test.txt"", ""test"");");
+            Assert.False(File.Exists("c:\\test.txt"));
+        }
+
         public void Dispose()
         {
             if (File.Exists("c:\\test.txt"))
