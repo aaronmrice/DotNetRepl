@@ -83,6 +83,16 @@ namespace Gobiner.SecureRepl.Tests
             }
         }
 
+        [Fact]
+        public void CanExecuteCode()
+        {
+            using (var repl = new ProcessWrapper())
+            {
+                Assert.Equal("[(4, 20)]", repl.Execute(@"Tuple.Create(4,20);"));
+                repl.Kill();
+            }
+        }
+
         public void Dispose()
         {
             if (File.Exists("c:\\test.txt"))
