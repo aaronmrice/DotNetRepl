@@ -43,7 +43,7 @@ namespace Gobiner.SecureRepl
                     Console.WriteLine("Service is available.");
                     while (ProcessState.LastHeartBeat + new TimeSpan(0, 5, 0) > DateTime.Now && !ProcessState.InstructedToDie)
                     {
-                        Thread.Sleep(5000);
+                        Thread.Sleep(1000);
                     }
 
                     host.Close();

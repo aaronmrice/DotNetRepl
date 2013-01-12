@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -17,7 +18,18 @@ namespace Gobiner.SecureRepl.Tests
             {
                 repl.Execute(@"try { while(true); } finally { while(true); }");
                 Assert.True(true);
-                Assert.False(repl.IsProcessAlive);
+            }
+        }
+
+        [Fact(Timeout = 20000)]
+        public void ProtectedSpinloopKillsProcess()
+        {
+            using (var repl = new ProcessWrapper())
+            {
+                repl.Execute(@"try { while(true); } finally { while(true); }");
+                while (repl.IsProcessAlive)
+                    Thread.Sleep(500);
+                Assert.True(true);
             }
         }
 
@@ -28,6 +40,16 @@ namespace Gobiner.SecureRepl.Tests
             {
                 repl.Execute(@"while(true);");
                 Assert.True(true);
+            }
+        }
+
+        [Fact(Timeout = 20000)]
+        public void SpinloopDoesNotKillProcess()
+        {
+            using (var repl = new ProcessWrapper())
+            {
+                repl.Execute(@"while(true);");
+                Thread.Sleep(10000);
                 Assert.True(repl.IsProcessAlive);
             }
         }
@@ -44,7 +66,6 @@ namespace Gobiner.SecureRepl.Tests
                 repl.Kill();
 
                 Assert.False(File.Exists("c:\\test.txt"));
-                Assert.False(repl.IsProcessAlive);
             }
         }
 
@@ -59,7 +80,6 @@ namespace Gobiner.SecureRepl.Tests
                 repl.Execute(@"new System.Security.PermissionSet(System.Security.Permissions.PermissionState.Unrestricted).Assert(); System.IO.File.WriteAllText(@""c:\test.txt"", ""test"");");
                 repl.Kill();
                 Assert.False(File.Exists("c:\\test.txt"));
-                Assert.False(repl.IsProcessAlive);
             }
         }
 
