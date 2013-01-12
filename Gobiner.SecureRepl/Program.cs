@@ -23,32 +23,39 @@ namespace Gobiner.SecureRepl
         [SecurityCritical]
         static void Main(string[] args)
         {
-            int port = 0;
-            if (args.Length == 0 || !int.TryParse(args[0], out port))
+            try
             {
-                Console.Error.WriteLine("You must pass in an argument for the port.");
-                Environment.Exit(1);
-            }
-
-
-            ProcessState.LastHeartBeat = DateTime.Now;
-
-            using (ServiceHost host = new ServiceHost(typeof(Repl), new Uri[] { new Uri("net.tcp://localhost:" + port) }))
-            {
-                host.AddServiceEndpoint(typeof(IRepl), new NetTcpBinding(), "net.tcp://localhost:" + port + "/Repl");
-
-                host.Open();
-
-                Console.WriteLine("Service is available.");
-                while (ProcessState.LastHeartBeat + new TimeSpan(0, 5, 0) > DateTime.Now && !ProcessState.InstructedToDie)
+                int port = 0;
+                if (args.Length == 0 || !int.TryParse(args[0], out port))
                 {
-                    Thread.Sleep(5000);
+                    Console.Error.WriteLine("You must pass in an argument for the port.");
+                    Environment.Exit(1);
                 }
 
-                host.Close();
-            }
+                ProcessState.LastHeartBeat = DateTime.Now;
 
-            Environment.Exit(0);
+                using (ServiceHost host = new ServiceHost(typeof(Repl), new Uri("net.tcp://localhost:" + port)))
+                {
+                    host.AddServiceEndpoint(typeof(IRepl), new NetTcpBinding(), "net.tcp://localhost:" + port + "/Repl");
+
+                    host.Open();
+
+                    Console.WriteLine("Service is available.");
+                    while (ProcessState.LastHeartBeat + new TimeSpan(0, 5, 0) > DateTime.Now && !ProcessState.InstructedToDie)
+                    {
+                        Thread.Sleep(5000);
+                    }
+
+                    host.Close();
+                }
+
+                Environment.Exit(0);
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText(Assembly.GetExecutingAssembly().Location + ".exception", ex.ToString());
+                throw;
+            }
         }
     }
 }

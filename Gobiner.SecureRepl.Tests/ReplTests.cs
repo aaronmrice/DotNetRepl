@@ -13,17 +13,23 @@ namespace Gobiner.SecureRepl.Tests
         [Fact(Timeout = 10000)]
         public void ProtectedSpinloopReturns()
         {
-            var repl = new Repl();
+            using (var repl = new ProcessWrapper())
+            {
             repl.Execute(@"try { while(true); } finally { while(true); }");
             Assert.True(true);
+            Assert.False(repl.IsProcessAlive);
+            }
         }
 
         [Fact(Timeout = 10000)]
         public void SpinloopReturns()
         {
-            var repl = new Repl();
-            repl.Execute(@"while(true);");
-            Assert.True(true);
+            using (var repl = new ProcessWrapper())
+            {
+                repl.Execute(@"while(true);");
+                Assert.True(true);
+                Assert.False(repl.IsProcessAlive);
+            }
         }
 
         [Fact]
@@ -32,9 +38,14 @@ namespace Gobiner.SecureRepl.Tests
             if (File.Exists("c:\\test.txt"))
                 File.Delete("c:\\test.txt");
 
-            var repl = new Repl();
-            repl.Execute(@"System.IO.File.WriteAllText(@""c:\test.txt"", ""test"");");
+            using (var repl = new ProcessWrapper())
+            {
+                repl.Execute(@"System.IO.File.WriteAllText(@""c:\test.txt"", ""test"");");
+                repl.Kill();
+            
             Assert.False(File.Exists("c:\\test.txt"));
+            Assert.False(repl.IsProcessAlive);
+            }
         }
 
         [Fact]
@@ -43,9 +54,13 @@ namespace Gobiner.SecureRepl.Tests
             if (File.Exists("c:\\test.txt"))
                 File.Delete("c:\\test.txt");
 
-            var repl = new Repl();
-            repl.Execute(@"new System.Security.PermissionSet(System.Security.Permissions.PermissionState.Unrestricted).Assert(); System.IO.File.WriteAllText(@""c:\test.txt"", ""test"");");
-            Assert.False(File.Exists("c:\\test.txt"));
+            using (var repl = new ProcessWrapper())
+            {
+                repl.Execute(@"new System.Security.PermissionSet(System.Security.Permissions.PermissionState.Unrestricted).Assert(); System.IO.File.WriteAllText(@""c:\test.txt"", ""test"");");
+                repl.Kill();
+                Assert.False(File.Exists("c:\\test.txt"));
+                Assert.False(repl.IsProcessAlive);
+            }
         }
 
         public void Dispose()

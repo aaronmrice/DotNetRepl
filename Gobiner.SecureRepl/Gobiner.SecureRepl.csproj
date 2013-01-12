@@ -60,7 +60,13 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Gobiner.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Gobiner.SecureRepl.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.CSharp">
+      <HintPath>..\Dependencies\Mono.CSharp\Mono.CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Roslyn.Compilers.Common.1.2.20906.2\lib\net45\Roslyn.Compilers.dll</HintPath>
@@ -115,16 +121,29 @@
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="IRepl.cs" />
     <Compile Include="ProcessState.cs" />
+    <Compile Include="ProcessWrapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repl.cs" />
     <Compile Include="ReplResult.cs" />
     <Compile Include="SecureRoslynWrapper.cs" />
+    <Compile Include="Service References\Wcf\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Gobiner.snk" />
     <None Include="packages.config" />
+    <None Include="Service References\Wcf\item.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Wcf\item1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Wcf\Repl.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

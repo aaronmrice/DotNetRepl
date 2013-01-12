@@ -12,11 +12,7 @@ namespace Gobiner.SecureRepl.CommandLine
     {
         static void Main(string[] args)
         {
-            var port = new Random().Next(10000, 20000);
-            Process.Start("Gobiner.SecureRepl.exe", port.ToString());
-            Thread.Sleep(500);
-            var wcfClient = new Wcf.ReplClient(new System.ServiceModel.NetTcpBinding(), new System.ServiceModel.EndpointAddress("net.tcp://localhost:" + port + "/Repl"));
-
+            var repl = new Gobiner.SecureRepl.ProcessWrapper();
             var input = "";
 
             while(true)
@@ -25,10 +21,10 @@ namespace Gobiner.SecureRepl.CommandLine
                 if (string.IsNullOrEmpty(input))
                     break;
 
-                Console.WriteLine(wcfClient.Execute(input));
+                Console.WriteLine(repl.Execute(input));
             }
 
-            wcfClient.Kill();
+            repl.Kill();
         }
     }
 }

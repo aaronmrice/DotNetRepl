@@ -10,7 +10,7 @@ using Gobiner.SecureRepl.Extensions;
 
 namespace Gobiner.SecureRepl
 {
-    public static class ProcessState
+    internal static class ProcessState
     {
         private static object lockObject = new object();
 
@@ -28,7 +28,8 @@ namespace Gobiner.SecureRepl
                 new AppDomainSetup() { DisallowCodeDownload = true, ApplicationBase = AppDomain.CurrentDomain.BaseDirectory },
                 safePerms,
                 Assembly.GetExecutingAssembly().GetStrongName(),
-                typeof(SecureRoslynWrapper).Assembly.GetStrongName());
+                typeof(SecureRoslynWrapper).Assembly.GetStrongName(),
+                typeof(global::Mono.CSharp.AbstractMessage).Assembly.GetStrongName());
 
             SecureRepl = (SecureRoslynWrapper)safeDomain.CreateInstanceFromAndUnwrap(typeof(SecureRoslynWrapper).Assembly.Location, typeof(SecureRoslynWrapper).FullName);
         }

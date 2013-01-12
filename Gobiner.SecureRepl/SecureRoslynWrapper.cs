@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
@@ -30,6 +31,7 @@ namespace Gobiner.SecureRepl
                 Engine.ImportNamespace(name);
 
             Session = Engine.CreateSession();
+
             CodeAccessPermission.RevertAssert();
         }
 
@@ -78,12 +80,6 @@ namespace Gobiner.SecureRepl
             {
                 CodeAccessPermission.RevertAssert();
             }
-
-
-            // Required to work around full-trust finalizers in Roslyn.Compilers.MetadataReader.MemoryMappedFile
-            new PermissionSet(PermissionState.Unrestricted).Assert();
-            GC.Collect(3, GCCollectionMode.Forced, true);
-            CodeAccessPermission.RevertAssert();
 
             return ret;
         }
