@@ -15,9 +15,9 @@ namespace Gobiner.SecureRepl.Tests
         {
             using (var repl = new ProcessWrapper())
             {
-            repl.Execute(@"try { while(true); } finally { while(true); }");
-            Assert.True(true);
-            Assert.False(repl.IsProcessAlive);
+                repl.Execute(@"try { while(true); } finally { while(true); }");
+                Assert.True(true);
+                Assert.False(repl.IsProcessAlive);
             }
         }
 
@@ -28,7 +28,7 @@ namespace Gobiner.SecureRepl.Tests
             {
                 repl.Execute(@"while(true);");
                 Assert.True(true);
-                Assert.False(repl.IsProcessAlive);
+                Assert.True(repl.IsProcessAlive);
             }
         }
 
@@ -42,9 +42,9 @@ namespace Gobiner.SecureRepl.Tests
             {
                 repl.Execute(@"System.IO.File.WriteAllText(@""c:\test.txt"", ""test"");");
                 repl.Kill();
-            
-            Assert.False(File.Exists("c:\\test.txt"));
-            Assert.False(repl.IsProcessAlive);
+
+                Assert.False(File.Exists("c:\\test.txt"));
+                Assert.False(repl.IsProcessAlive);
             }
         }
 
