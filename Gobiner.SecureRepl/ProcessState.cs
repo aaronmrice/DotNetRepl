@@ -28,8 +28,7 @@ namespace Gobiner.SecureRepl
                 new AppDomainSetup() { DisallowCodeDownload = true, ApplicationBase = AppDomain.CurrentDomain.BaseDirectory },
                 safePerms,
                 Assembly.GetExecutingAssembly().GetStrongName(),
-                typeof(SecureRoslynWrapper).Assembly.GetStrongName(),
-                typeof(global::Mono.CSharp.AbstractMessage).Assembly.GetStrongName());
+                typeof(SecureRoslynWrapper).Assembly.GetStrongName());
 
             SecureRepl = (SecureRoslynWrapper)safeDomain.CreateInstanceFromAndUnwrap(typeof(SecureRoslynWrapper).Assembly.Location, typeof(SecureRoslynWrapper).FullName);
         }
