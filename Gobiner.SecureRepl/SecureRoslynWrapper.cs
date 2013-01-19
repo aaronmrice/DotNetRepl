@@ -16,6 +16,9 @@ namespace Gobiner.SecureRepl
     {
         private static readonly string[] references = new string[] { "System.dll", "System.Core.dll", "System.Data.dll", "System.Data.DataSetExtensions.dll", "Microsoft.CSharp.dll", "System.Xml.dll", "System.Xml.Linq.dll", "System.Data.Entity.dll", "System.Windows.Forms.dll", };
         private static readonly string[] namespaces = new string[] { "System", "System.Collections.Generic", "System.Linq", "System.Text" };
+        private object lockObject = new object();
+        private Submission<object> submission;
+        private ReplResult result;
 
         private ScriptEngine Engine;
         private Session Session;
@@ -40,48 +43,63 @@ namespace Gobiner.SecureRepl
         {
             new PermissionSet(PermissionState.Unrestricted).Assert();
 
-            ReplResult ret = new ReplResult();
-            try
+            result = new ReplResult();
+            lock (lockObject)
             {
-                var submission = Session.CompileSubmission<object>(inp);
+                try
+                {
+                    submission = Session.CompileSubmission<object>(inp);
 
-                var thread = new Thread(new ThreadStart(() =>
-                {
-                    try
+                    var thread = new Thread(new ParameterizedThreadStart(ExecuteSubmission), 1024 * 1024);
+                    thread.Start(submission);
+                    if (!thread.Join(4000))
                     {
-                        var result = submission.Execute();
-                        ret.ExecutionResult = ObjectFormatter.Instance.FormatObject(result);
+                        thread.Abort();
                     }
-                    catch (Exception ex)
+                    if (!thread.Join(500))
                     {
-                        ret.ExecutionResult = ex.ToString();
+                        // Some kind of submission that can't be aborted, process needs to die
+                        result.ExecutionStillOngoing = true;
                     }
-                }), 1024 * 1024);
-                thread.Start();
-                if (!thread.Join(4000))
-                {
-                    thread.Abort();
                 }
-                if (!thread.Join(500))
+                catch (CompilationErrorException ex)
                 {
-                    // Some kind of submission that can't be aborted, process needs to die
-                    ret.ExecutionStillOngoing = true;
+                    result.CompilationErrors = ex.Diagnostics.Select(x => x.Info.ToString()).ToArray();
+                }
+                catch (Exception ex)
+                {
+                    result.ExecutionResult = ex.ToString();
+                }
+                finally
+                {
+                    CodeAccessPermission.RevertAssert();
                 }
             }
-            catch (CompilationErrorException ex)
+
+            return result;
+        }
+
+        [SecurityCritical]
+        private void ExecuteSubmission(object parameter)
+        {
+            Submission<object> submission = (Submission<object>)parameter;
+            AppDomain.CurrentDomain.PermissionSet.PermitOnly();
+            try
             {
-                ret.CompilationErrors = ex.Diagnostics.Select(x => x.Info.ToString()).ToArray();
+                var execution = submission.Execute();
+                result.ExecutionResult = ObjectFormatter.Instance.FormatObject(execution);
             }
             catch (Exception ex)
             {
-                ret.ExecutionResult = ex.ToString();
+                if (ex.GetType() == typeof(SecurityException))
+                    new PermissionSet(PermissionState.Unrestricted).Assert();
+
+                result.ExecutionResult = ex.ToString();
             }
             finally
             {
                 CodeAccessPermission.RevertAssert();
             }
-
-            return ret;
         }
     }
 }
